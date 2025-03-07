@@ -11,7 +11,7 @@ The dataset? **Over 100K rows**.
 
 ![The Worst Query Ever (1)](https://github.com/user-attachments/assets/cc50e4c7-284e-47e3-91b3-45f44bb22782)
 
-
+--------------------------------
 
 ## 🚨 Step 1: The “Unoptimized” Query
 
@@ -33,7 +33,7 @@ LIKE ‘%manches%’ → Wildcard search prevents index usage, leading to anothe
 
 💡 Hint: Table SEEK > Table SCAN
 
-
+---------------------------------
 
 ## 🚀 Step 2: Optimize Column Selection
 
@@ -49,3 +49,32 @@ AND a.Club LIKE '%manches%';
 ✅ **Solution:** Select only the necessary columns.
 
 🚀 **Result:** Less memory usage, improved performance.
+
+
+----------------------------------
+
+## 🔥 Step 3: Fix Function-Based Filtering
+
+```SQL
+ALTER TABLE fifa21
+ADD Nationality_Lower AS LOWER(Nationality) PERSISTED;
+```
+
+```SQL
+CREATE INDEX idx_fifa21_nationality ON fifa21(Nationality_Lower);
+```
+
+❌ **Problem:** Using LOWER() disables indexes.
+
+✅ **Solution:** Create a computed column and index it.
+
+🚀 **Result:** Faster filtering with an indexed column!
+
+```SQL
+-- WHERE CLAUSE NOW LOOKS LIKE THIS
+
+WHERE a.Nationality_Lower = 'england'
+```
+
+--------------------------------------
+
